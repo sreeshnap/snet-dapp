@@ -9,7 +9,7 @@ import OutlinedTextArea from "../../common/OutlinedTextArea";
 
 import { neural_summarisation } from "../news_summary/summaries_pb_service";
 
-export default class NewSummaryService extends React.Component {
+export default class NewsSummaryService extends React.Component {
   constructor(props) {
     super(props);
     this.submitAction = this.submitAction.bind(this);
