@@ -7,7 +7,7 @@ import InfoIcon from "@material-ui/icons/Info";
 import HoverIcon from "../../standardComponents/HoverIcon";
 import OutlinedTextArea from "../../common/OutlinedTextArea";
 
-import { TextSummary } from "./summary_pb_service";
+import { neural_summarisation } from "../news_summary/summaries_pb_service";
 
 export default class NewSummaryService extends React.Component {
   constructor(props) {
@@ -16,6 +16,8 @@ export default class NewSummaryService extends React.Component {
     this.handleFormUpdate = this.handleFormUpdate.bind(this);
 
     const initialUserInput = {
+      serviceName: "neural_summarisation",
+      methodName: "neural_summarisation",
       article_content:
         'Analysts are predicting record highs as a global shortage of teddy bears sweeps the nation. "The market these products is way up". The advice is to stay indoors as society collapses under the demand.',
     };
@@ -39,22 +41,26 @@ export default class NewSummaryService extends React.Component {
   }
 
   submitAction() {
-    const { article_content } = this.state;
-    const methodDescriptor = TextSummary["summary"];
+    // console.log('hai');
+    const { methodName, article_content } = this.state;
+    const methodDescriptor = neural_summarisation[methodName];
     const request = new methodDescriptor.requestType();
-
-    request.setArticleContent(article_content);
+    // console.log('45');
+    request.setText(article_content);
 
     const props = {
       request,
       onEnd: ({ message }) => {
         this.setState({
-          response: { status: "success", article_summary: message.getArticleSummary() },
+          response: { status: "success", article_summary: message.getSummary() },
         });
       },
     };
 
     this.props.serviceClient.unary(methodDescriptor, props);
+    // console.log('58');
+  //  console.log(props);
+  
   }
 
   renderForm() {
