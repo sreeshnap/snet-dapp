@@ -12,6 +12,7 @@ import MediaGallery from "../MediaGallery";
 import PromoBox from "./PromoBox";
 import ExistingModel from '../ExistingModel';
 
+
 const AboutService = ({
   classes,
   isLoggedIn,
@@ -21,6 +22,8 @@ const AboutService = ({
   demoExampleRef,
   scrollToView,
   demoComponentRequired,
+  haveTrainingModel,
+  training,
 }) => {
   return (
     <Grid container spacing={24} className={classes.aboutContainer}>
@@ -36,7 +39,8 @@ const AboutService = ({
           scrollToView={scrollToView}
           demoComponentRequired={demoComponentRequired}
         />
-        <ExistingModel />
+        {(haveTrainingModel === true)? <ExistingModel training={training}/>: null }
+        {/* <ExistingModel /> */}
         <div className={classes.showOnNrmalResolution}>
           <PromoBox />
         </div>

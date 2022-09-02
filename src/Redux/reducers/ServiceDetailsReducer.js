@@ -7,6 +7,7 @@ import map from "lodash/map";
 const InitialServiceDetails = {
   details: {},
   freeCallsUsed: "",
+  detailsTraining: {},
 };
 
 const serviceDetailsReducer = (state = InitialServiceDetails, action) => {
@@ -19,6 +20,9 @@ const serviceDetailsReducer = (state = InitialServiceDetails, action) => {
     }
     case serviceDetailsActions.UPDATE_FREE_CALLS_INFO: {
       return { ...state, freeCallsUsed: action.payload };
+    }
+    case serviceDetailsActions.UPDATE_TRAINING_DETAILS: {
+      return { ...state, detailsTraining: action.payload };
     }
     default: {
       return state;
@@ -52,6 +56,7 @@ export const serviceDetails = (state, orgId, serviceId) => {
 
   return currentServiceDetails(state);
 };
+
 
 const groups = state => {
   return state.serviceDetailsReducer.details.groups;

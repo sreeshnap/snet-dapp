@@ -19,7 +19,12 @@ import SeoMetadata from "../common/SeoMetadata";
 import Routes from "../../utility/constants/Routes";
 import CardImg from "../../assets/images/SnetDefaultServiceImage.png";
 
+import { fetchTrainingModel } from "../../Redux/actionCreators/ServiceDetailsActions";
+import { async } from "validate.js";
+
+
 export const HERO_IMG = "hero_image";
+
 
 class ServiceDetails extends Component {
   constructor(props) {
@@ -42,6 +47,18 @@ class ServiceDetails extends Component {
     if (isEmpty(this.props.service)) {
       this.fetchServiceDetails();
     }
+  // console.log(this.props.fetchTrainingModel);
+  this.fetchTrainingModel();
+  }
+
+  fetchTrainingModel = async () => {
+    const {
+      fetchTrainingModel,
+      match: {
+        params: { orgId, serviceId,serviceDetails },
+      },
+    } = this.props;
+    await fetchTrainingModel(orgId, serviceId,serviceDetails);
   }
 
   fetchServiceDetails = async () => {
@@ -57,6 +74,7 @@ class ServiceDetails extends Component {
       this.setState({ error: true });
     }
   };
+
 
   handleTabChange = activeTab => {
     if (window.location.href.indexOf("#demo") > -1) {
@@ -88,8 +106,13 @@ class ServiceDetails extends Component {
     this.scrollToView();
   };
 
+
   render() {
-    const { classes, service, pricing, loading, error, history, groupInfo, match } = this.props;
+    const { classes, service, pricing, loading, error, history, groupInfo, match,training } = this.props;
+    // console.log(training);
+    // console.log(haveTrainingModel);
+    // console.log(Object.keys(training).length);
+    let haveTrainingModel = (Object.keys(training).length === 0  ? false : true);
     const { offlineNotication } = this.state;
     const {
       params: { orgId, serviceId },
@@ -106,6 +129,7 @@ class ServiceDetails extends Component {
       );
     }
 
+
     const { activeTab } = this.state;
     const tabs = [
       {
@@ -119,6 +143,8 @@ class ServiceDetails extends Component {
             demoExampleRef={this.demoExampleRef}
             scrollToView={this.scrollToView}
             demoComponentRequired={!!service.demo_component_required}
+            haveTrainingModel={haveTrainingModel}
+            training={training}
           />
         ),
       },
@@ -127,11 +153,17 @@ class ServiceDetails extends Component {
         activeIndex: 1,
         component: <InstallAndRunService service={service} groupId={groupInfo.group_id} />,
       },
+     haveTrainingModel === true ?
       {
         name: "Models",
         activeIndex: 2,
         // component: <TrainingModels />,
-      },
+      } : 
+      {
+        name: null,
+        activeIndex: 2,
+      }
+     
     ];
 
     const seoURL = `${process.env.REACT_APP_BASE_URL}/servicedetails/org/${orgId}/service/${serviceId}`;
@@ -189,11 +221,13 @@ const mapStateToProps = (state, ownProps) => {
     groupInfo: groupInfo(state),
     pricing: pricing(state),
     loading: state.loaderReducer.app.loading,
+    training: state.serviceDetailsReducer.detailsTraining,
   };
 };
 
 const mapDispatchToProps = dispatch => ({
   fetchServiceDetails: (orgId, serviceId) => dispatch(serviceDetailsActions.fetchServiceDetails(orgId, serviceId)),
+  fetchTrainingModel: (orgId, serviceId,serviceDetails) => dispatch(fetchTrainingModel(orgId, serviceId,serviceDetails)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(useStyles)(ServiceDetails));
