@@ -1,11 +1,9 @@
 import API from "@aws-amplify/api";
-
 import { APIEndpoints, APIPaths } from "../../config/APIEndpoints";
 import { initializeAPIOptions } from "../../utility/API";
 import { fetchAuthenticatedUser } from "./UserActions";
 import { loaderActions } from "./";
 import { LoaderContent } from "../../utility/constants/LoaderContent";
-import { async } from "validate.js";
 // import { cacheS3Url } from "../../utility/image";
 
 export const UPDATE_SERVICE_DETAILS = "UPDATE_SERVICE_DETAILS";
@@ -33,7 +31,6 @@ const fetchServiceDetailsSuccess = serviceDetails => dispatch => {
 const fetchServiceDetailsAPI = async (orgId, serviceId) => {
   const url = `${APIEndpoints.CONTRACT.endpoint}/org/${orgId}/service/${serviceId}`;
   const response = await fetch(url);
-  console.log(response,'actual');
   return response.json();
 };
 
@@ -51,39 +48,25 @@ export const fetchServiceDetails = (orgId, serviceId) => async dispatch => {
 };
 
 const fetchTrainingModelSuccess = serviceTrainingData => dispatch => {
-  // console.log(serviceTrainingData,'action');
   dispatch({ type: UPDATE_TRAINING_DETAILS, payload: serviceTrainingData });
 };
 
-const fetchServiceTrainingDataAPI = async(orgId, serviceId, serviceDetails)=>{
-  const url =`https://example-service-a.singularitynet.io:8011/servicemethoddetails`;
-  // const url =`${APIEndpoints.CONTRACT.endpoint}/org/${orgId}/service/${serviceId}/serviceDetails/${serviceDetails}`;
-  // const url = `${APIEndpoints.CONTRACT.endpoint}/org/${orgId}/service/${serviceId}`;
+const fetchServiceTrainingDataAPI = async(orgId, serviceId)=>{
+  try{
+  const dataForUrl = await fetchServiceDetailsAPI(orgId, serviceId);
+  const url = `${dataForUrl.data.groups[0].endpoints[0].endpoint}/servicemethoddetails`;
   const response = await fetch(url);
-  console.log(response);
   return response.json();
+  }
+  catch(error){
+    return {};
+  }
 };
 
-export const fetchTrainingModel = (orgId, serviceId,serviceDetails) => async dispatch =>{
-  const serviceTrainingData = await fetchServiceTrainingDataAPI(orgId, serviceId,serviceDetails);
-  // const serviceTrainingData ={
-  //   "dynamicpricing": [
-  //     {
-  //       "method": "/example_service.Calculator/add",
-  //       "dynmicPricingMethod": "/example_service.Calculator/dynamic_pricing_add"
-  //     },
-  //     {
-  //       "method": "/example_service.Calculator/train_add",
-  //       "dynmicPricingMethod": "/example_service.Calculator/dynamic_pricing_train_add"
-  //     }
-  //   ],
-  //   "training_methods": [
-  //     "/example_service.Calculator/train_add",
-  //     "/example_service.Calculator/train_subtraction"
-  //   ]
-  // }
-  console.log(serviceTrainingData,'type',dispatch);
+export const fetchTrainingModel = (orgId, serviceId) => async dispatch =>{
+  const serviceTrainingData = await fetchServiceTrainingDataAPI(orgId, serviceId);
   dispatch(fetchTrainingModelSuccess(serviceTrainingData));
+
 };
 
 const fetchMeteringDataSuccess = usageData => dispatch => {

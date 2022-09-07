@@ -2,17 +2,10 @@ import React from "react";
 import { withStyles } from "@material-ui/styles";
 import ModelDetails from "./ModelDetails";
 import StyledButton from "../../common/StyledButton";
-
 import { useStyles } from "./styles";
 
-
-// let haveANewModel = true;
-
-
 const ExistingModel = ({ classes,training }) => {
-// console.log((training.training_methods).length);
-// let haveANewModel = (training.training_methods == undefined ? false : true);
-let haveANewModel = ((training.training_methods).length == 0 ? false: true);
+let haveANewModel = (((training.training_methods === undefined)||((training.training_methods).length === 0)) ? false : true);
   return (
     <div className={classes.existingModelContainer}>
       <h2>Existing Model</h2>
@@ -26,7 +19,6 @@ let haveANewModel = ((training.training_methods).length == 0 ? false: true);
       />
 			<div className={classes.btnContainer}>
       {(haveANewModel === true)? <StyledButton btnText="request a new model" />: null }
-				{/* <StyledButton btnText="request a new model" /> */}
 			</div>
     </div>
   );

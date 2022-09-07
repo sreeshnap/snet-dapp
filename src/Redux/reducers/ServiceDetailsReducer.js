@@ -53,7 +53,6 @@ export const serviceDetails = (state, orgId, serviceId) => {
   if (org_id !== orgId || service_id !== serviceId) {
     return undefined;
   }
-
   return currentServiceDetails(state);
 };
 
